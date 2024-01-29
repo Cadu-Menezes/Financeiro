@@ -4,10 +4,11 @@ import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 
 export default function Movimentacoes({data}) {
 
+    const [showValue, setShowValue] = useState(false);
     
     return (
    
-        <TouchableOpacity style={styles.container}>
+        <TouchableOpacity style={styles.container} onPress={ () => setShowValue(!showValue) }>
         
             <Text style={styles.data}>{data.data}</Text>
 
@@ -15,9 +16,15 @@ export default function Movimentacoes({data}) {
                 
                 <Text style={styles.descricao}> {data.descricao}</Text>
                 
-                <Text style={data.tipo == 1 ? styles.valor : styles.saida}>
-                    {data.tipo === 1 ? `R$: ${data.valor}` : ` R$: - ${data.valor}`} 
-                </Text>
+                { showValue ? (
+                    <Text style={data.tipo == 1 ? styles.valor : styles.saida}>
+                        {data.tipo === 1 ? `R$: ${data.valor}` : ` R$: - ${data.valor}`} 
+                    </Text>
+                ) : (
+                    <View style={styles.esconder}>
+
+                    </View>
+                )}
             
             </View>
         
@@ -61,6 +68,14 @@ const styles = StyleSheet.create({
         fontSize: 16,
         color: '#e74c3c',
         fontWeight: 'bold'
+    },
+
+    esconder:{
+        marginTop: 6,
+        width: 80,
+        height: 10,
+        backgroundColor: '#DADADA',
+        borderRadius: 8
     }
 
 })
