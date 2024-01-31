@@ -3,6 +3,8 @@ import { StyleSheet, Text, View, FlatList } from 'react-native';
 import Header from '../../Components/Header'
 import Card from '../../Components/Card'
 import Movimentacoes from '../../Components/Movimentacoes'
+import Acoes from '../../Components/Acoes';
+
 
 const lista = [
 
@@ -43,6 +45,8 @@ export default function App() {
       
       <StatusBar style="auto" />
 
+      <Acoes />
+
       <Text style={styles.titulo}>Últimas Movimentações</Text>
 
       <FlatList
@@ -66,10 +70,7 @@ const styles = StyleSheet.create({
   titulo:{
     fontSize: 18,
     fontWeight: 'bold',
-    marginLeft: 14,
-    marginRight: 14,
-    marginTop: 14,
-    marginBottom: 8
+    margin: 14
   },
 
   lista:{
