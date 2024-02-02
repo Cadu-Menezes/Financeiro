@@ -1,9 +1,14 @@
 import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, ScrollView } from 'react-native';
 import {AntDesign} from '@expo/vector-icons'
+import Routes from '../../Routes/routes';
+import { useNavigation } from '@react-navigation/native'
 
 
 export default function Acoes() {
+
+    
+
  return (
    <ScrollView style={styles.container} horizontal={true} showsHorizontalScrollIndicator={false}>
         

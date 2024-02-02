@@ -1,5 +1,6 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
+import Routes from '../../Routes/routes';
 
 export default function Card({entrada, saida}) {
  return (
