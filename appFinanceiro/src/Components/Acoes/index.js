@@ -1,18 +1,17 @@
 import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, ScrollView } from 'react-native';
 import {AntDesign} from '@expo/vector-icons'
-import Routes from '../../Routes/routes';
 import { useNavigation } from '@react-navigation/native'
 
 
 export default function Acoes() {
 
-    
+    const {navigate} =  useNavigation();
 
  return (
    <ScrollView style={styles.container} horizontal={true} showsHorizontalScrollIndicator={false}>
         
-        <TouchableOpacity style={styles.Botao}>
+        <TouchableOpacity style={styles.Botao} onPress={ () => {navigate('Entrada')} }>
             <View style={styles.areaBotao}>
                 <AntDesign name='addfolder' size={26} color={'#000'}/>
             </View>
@@ -20,7 +19,7 @@ export default function Acoes() {
 
         </TouchableOpacity>
 
-        <TouchableOpacity style={styles.Botao}>
+        <TouchableOpacity style={styles.Botao} onPress={ () => {navigate('Saida')} }>
             <View style={styles.areaBotao}>
                 <AntDesign name='tagso' size={26} color={'#000'}/>
             </View>
