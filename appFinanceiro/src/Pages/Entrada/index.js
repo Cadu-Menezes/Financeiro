@@ -1,7 +1,7 @@
 import { View, Text, TextInput, StyleSheet, Switch } from 'react-native';
 import React, { useState } from 'react';
 import Header from '../../Components/Header';
-
+import { SelectList } from 'react-native-dropdown-select-list'
 
 
 export default function Entrada() {
@@ -21,6 +21,15 @@ export default function Entrada() {
     console.log(data)
   }
 
+  const [selected, setSelected] = React.useState("");
+  
+  const combobox = [
+      {key:'1', value:'Salario'},
+      {key:'2', value:'Investimentos'},
+      {key:'3', value:'Lazer', disabled:true},
+      {key:'4', value:'Despesas Fixas', disabled:true},
+      {key:'5', value:'Contas', disabled:true},
+  ]
 
   return (
     
@@ -32,14 +41,25 @@ export default function Entrada() {
       
       <View style={styles.form}>
 
-        <Text style={styles.tituloForm}>Valor</Text>
-        <TextInput 
-        style={styles.input}
-        onChangeText={setValor}
-        value={valor}
-        placeholder='Digite o valor: R$: 200,00'
-        />
-        
+        <View>
+          <Text style={styles.tituloForm}>Valor</Text>
+          <TextInput 
+          style={styles.input}
+          onChangeText={setValor}
+          value={valor}
+          placeholder='Digite o valor: R$: 200,00'
+          />
+        </View> 
+
+        <View style={styles.campoForm}>
+          <Text style={styles.tituloForm}>Categoria:</Text>
+          <SelectList 
+            setSelected={(val) => setSelected(val)} 
+            data={combobox} 
+            save="value"
+          />
+        </View>
+
         <View style={styles.swith}>
           
           <Text style={styles.tituloForm}>Fixo:</Text>
@@ -52,6 +72,7 @@ export default function Entrada() {
           />
 
         </View>
+
 
       </View>
            
@@ -84,7 +105,7 @@ const styles = StyleSheet.create({
   },
 
   input:{
-    borderColor: '#000',
+    borderColor: '#BFBFBF',
     borderStyle: 'solid',
     borderWidth : 2,
     borderRadius: 5,
@@ -94,6 +115,10 @@ const styles = StyleSheet.create({
   swith:{
     flexDirection: 'row',
     alignItems: 'center'
+  },
+
+  campoForm:{
+    marginTop: 6
   }
   
 
