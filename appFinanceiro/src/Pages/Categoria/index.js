@@ -4,6 +4,7 @@ import Header from '../../Components/Header';
 import { SelectList } from 'react-native-dropdown-select-list'
 import Movimentacoes from '../../Components/Movimentacoes'
 import { getListaCategorias } from "./functions/listacategorias"
+import Loading from "../../Components/Loading"
 
 export default function Entrada() {
   
@@ -43,7 +44,9 @@ export default function Entrada() {
       <Header name="Cadu Menezes"/>
     
       <Text style={styles.titulo}> Lista de Categorias </Text>
-     
+
+      <Loading/>
+
       <FlatList
         style={styles.lista}
         data={lista}

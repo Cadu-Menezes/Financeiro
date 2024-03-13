@@ -5,7 +5,6 @@ export const getListaCategorias = async (setData, setLoading, setError) => {
     setLoading(true);
 
     try{
-        console.log("Entrou Try")
 
         const response = await api.get("/categoria/lista");
         console.log("response", response)
