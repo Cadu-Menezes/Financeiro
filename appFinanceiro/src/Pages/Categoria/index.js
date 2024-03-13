@@ -1,14 +1,25 @@
 import { View, Text, TextInput, StyleSheet, Switch, FlatList } from 'react-native';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Header from '../../Components/Header';
 import { SelectList } from 'react-native-dropdown-select-list'
 import Movimentacoes from '../../Components/Movimentacoes'
-import axios from 'axios';
+import { getListaCategorias } from "./functions/listacategorias"
 
 export default function Entrada() {
   
-    const lista = [
+    const [data, setData] = useState([]);
+    const [load, setLoading] = useState(false);
+    const [error, setError] = useState(false);
 
+    useEffect(() => {
+      getListaCategorias(setData, setLoading, setError)
+    }, [])
+
+    useEffect(() => {
+      console.log(data)
+    }, [data])
+
+    const lista = [
         {
           id: 1,
           descricao: "Conta de luz",
@@ -16,23 +27,13 @@ export default function Entrada() {
           data: "25/01/2024", 
           tipo: 0 //saida
         }, 
-        
         {
           id: 2,
           descricao: "Salario",
           valor: "3500,00",
           data: "25/01/2024", 
           tipo: 1 //entrada
-        },
-      
-        {
-          id: 3,
-          descricao: "Faculdade",
-          valor: "920,00",
-          data: "25/01/2024", 
-          tipo: 0 //saida
-        }
-      
+        },      
       ]
 
   return (
