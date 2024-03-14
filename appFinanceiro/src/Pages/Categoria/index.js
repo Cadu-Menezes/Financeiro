@@ -1,10 +1,11 @@
-import { View, Text, TextInput, StyleSheet, Switch, FlatList } from 'react-native';
+import { View, Text, StyleSheet, Switch, FlatList } from 'react-native';
 import React, { useState, useEffect } from 'react';
 import Header from '../../Components/Header';
 import { SelectList } from 'react-native-dropdown-select-list'
-import Movimentacoes from '../../Components/Movimentacoes'
 import { getListaCategorias } from "./functions/listacategorias"
-import Loading from "../../Components/Loading"
+import LoadingComponent from "../../Components/Loading"
+import { Card } from '@ui-kitten/components';
+import Grid from '../../Components/Grid'
 
 export default function Entrada() {
   
@@ -16,26 +17,18 @@ export default function Entrada() {
       getListaCategorias(setData, setLoading, setError)
     }, [])
 
-    useEffect(() => {
-      console.log(data)
-    }, [data])
+    // useEffect(() => {
+    //   console.log(data)
+    // }, [data])
+    
+    const lista = []
+    
+    for (let item of data) {
+      
+      lista.push(item)
 
-    const lista = [
-        {
-          id: 1,
-          descricao: "Conta de luz",
-          valor: "300,00",
-          data: "25/01/2024", 
-          tipo: 0 //saida
-        }, 
-        {
-          id: 2,
-          descricao: "Salario",
-          valor: "3500,00",
-          data: "25/01/2024", 
-          tipo: 1 //entrada
-        },      
-      ]
+    }
+    console.log(lista)
 
   return (
     
@@ -45,15 +38,21 @@ export default function Entrada() {
     
       <Text style={styles.titulo}> Lista de Categorias </Text>
 
-      <Loading/>
+      <>
+        
+        {load && <LoadingComponent />}
 
-      <FlatList
-        style={styles.lista}
-        data={lista}
-        keyExtractor={ (item) => String(item.id)}
-        showsVerticalScrollIndicator={false}
-        renderItem={ ({item}) => <Movimentacoes data={item} /> }
-      />           
+        <FlatList
+            style={styles.lista}
+            data={lista}
+            keyExtractor={ (item) => String(item.id)}
+            showsVerticalScrollIndicator={false}
+            renderItem={ ({item}) => <Grid data={item} /> }
+          />
+      
+      </>
+
+                 
     
     </View>
 

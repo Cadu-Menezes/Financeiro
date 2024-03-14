@@ -1,31 +1,34 @@
 import React from 'react';
-import { View, StyleSheet, Text } from 'react-native';
+import { StyleSheet } from 'react-native';
 import { Layout, Spinner } from '@ui-kitten/components';
 
-export default function Loading() {
+const LoadingComponent = () => {
 
  return (
-   <View style={styles.container}>
-      
-      {/* <Layout style={styles.container} level='1'>
-        <Spinner size='giant' />
-      </Layout> */}
+    <Layout
+      style={styles.container}
+      level='1'
+    >
 
-        <Text>Olá mundooooooo!</Text>
-   </View>
+    <Spinner size='giant'
+     
+    style={styles.controlContainer}
+    />
+
+  </Layout>
   );
 
 }
 
 
 const styles = StyleSheet.create({
+  container: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    flexWrap: 'wrap',
+  },
 
-    container:{
-        maxHeight: 84,
-        marginTop: 18,
-        marginStart: 14,
-        marginEnd: 14,
-        paddingStart: 14
-    },
+});
 
-})
+export default LoadingComponent;
