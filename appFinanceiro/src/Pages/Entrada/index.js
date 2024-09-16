@@ -42,7 +42,7 @@ export default function Entrada({ navigation }) {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Nova Movimentação de Entrada</Text>
+      <Text style={styles.title}>Cadastrar Entrada</Text>
 
       {erro ? <Text style={styles.error}>{erro}</Text> : null}
 
@@ -55,6 +55,7 @@ export default function Entrada({ navigation }) {
         style={styles.input}
       />
 
+      <Text style={styles.label}>Categoria</Text>
       <Picker
         selectedValue={categoria}
         onValueChange={(itemValue) => setCategoria(itemValue)}
@@ -94,5 +95,9 @@ const styles = StyleSheet.create({
     color: 'red',
     textAlign: 'center',
     marginBottom: 10,
+  },
+  label: {
+    fontSize: 16,
+    marginBottom: 5,
   },
 });
