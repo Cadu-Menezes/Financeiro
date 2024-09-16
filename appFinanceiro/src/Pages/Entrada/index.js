@@ -1,125 +1,98 @@
-import { View, Text, TextInput, StyleSheet, Switch } from 'react-native';
-import React, { useState } from 'react';
-import Header from '../../Components/Header';
-import { SelectList } from 'react-native-dropdown-select-list'
+import React, { useState, useEffect } from 'react';
+import { View, StyleSheet } from 'react-native';
+import { TextInput, Button, Text } from 'react-native-paper';
+import { Picker } from '@react-native-picker/picker'; 
+import { criarMovimentacao } from '../../Services/movimentacoesServices';
+import { obterCategorias } from '../../Services/categoriaServices';
 
+export default function Entrada({ navigation }) {
+  const [valor, setValor] = useState('');
+  const [categoria, setCategoria] = useState('');
+  const [categorias, setCategorias] = useState([]);
+  const [erro, setErro] = useState('');
 
-export default function Entrada() {
-  
-  const [valor, setValor] = useState('')
-  const [fixo, setFixo] = useState(false);
-  //Aqui quando o swith é acionado eu mudo o valor anterior dele
-  //Ex: de False vai para True | False --> True
-  const toggleSwitch = () => setFixo(previousState => !previousState);
+  useEffect(() => {
+    const fetchCategorias = async () => {
+      try {
+        const categoriasBuscadas = await obterCategorias();
+        setCategorias(categoriasBuscadas);
+        if (categoriasBuscadas.length > 0) {
+          setCategoria(categoriasBuscadas[0].id); // Definir a primeira categoria como padrão
+        }
+      } catch (error) {
+        console.error('Erro ao buscar categorias:', error);
+      }
+    };
 
-  function registrar(){
-    const data = {
-      valor,
-      fixo
+    fetchCategorias();
+  }, []);
+
+  const handleSubmit = async () => {
+    try {
+      if (!valor || !categoria) {
+        setErro('Todos os campos são obrigatórios.');
+        return;
+      }
+      await criarMovimentacao({ valor, categoria, movimentacao: 'entrada' }); // Definindo 'entrada'
+      navigation.goBack();
+    } catch (err) {
+      setErro('Falha ao salvar a movimentação.');
     }
-
-    console.log(data)
-  }
-
-  const [selected, setSelected] = React.useState("");
-  
-  const combobox = [
-      {key:'1', value:'Salario'},
-      {key:'2', value:'Investimentos'},
-      {key:'3', value:'Lazer', disabled:true},
-      {key:'4', value:'Despesas Fixas', disabled:true},
-      {key:'5', value:'Contas', disabled:true},
-  ]
+  };
 
   return (
-    
     <View style={styles.container}>
-      
-      <Header name="Cadu Menezes"/>
-    
-      <Text style={styles.titulo}> Registro de Entrada </Text>
-      
-      <View style={styles.form}>
+      <Text style={styles.title}>Nova Movimentação de Entrada</Text>
 
-        <View>
-          <Text style={styles.tituloForm}>Valor</Text>
-          <TextInput 
-          style={styles.input}
-          onChangeText={setValor}
-          value={valor}
-          placeholder='Digite o valor: R$: 200,00'
-          />
-        </View> 
+      {erro ? <Text style={styles.error}>{erro}</Text> : null}
 
-        <View style={styles.campoForm}>
-          <Text style={styles.tituloForm}>Categoria:</Text>
-          <SelectList 
-            setSelected={(val) => setSelected(val)} 
-            data={combobox} 
-            save="value"
-          />
-        </View>
+      <TextInput
+        label="Valor"
+        value={valor}
+        onChangeText={setValor}
+        mode="outlined"
+        keyboardType="numeric"
+        style={styles.input}
+      />
 
-        <View style={styles.swith}>
-          
-          <Text style={styles.tituloForm}>Fixo:</Text>
-          <Switch
-            trackColor={{false: '#767577', true: '#81b0ff'}}
-            thumbColor={fixo ? '#20B2AA' : '#f4f3f4'}
-            ios_backgroundColor="#3e3e3e"
-            onValueChange={toggleSwitch}
-            value={fixo}
-          />
+      <Picker
+        selectedValue={categoria}
+        onValueChange={(itemValue) => setCategoria(itemValue)}
+        style={styles.input}
+      >
+        {categorias.map(cat => (
+          <Picker.Item key={cat.id} label={cat.nome} value={cat.id} />
+        ))}
+      </Picker>
 
-        </View>
-
-
-      </View>
-           
+      <Button mode="contained" onPress={handleSubmit} style={styles.button}>
+        Salvar
+      </Button>
     </View>
-
-    );
+  );
 }
 
 const styles = StyleSheet.create({
-
   container: {
     flex: 1,
-    backgroundColor: '#FFF'
+    justifyContent: 'center',
+    padding: 20,
+    backgroundColor: '#fff',
   },
-
-  titulo:{
-    fontSize: 18,
-    fontWeight: 'bold',
-    margin: 14
+  title: {
+    fontSize: 24,
+    marginBottom: 20,
+    textAlign: 'center',
   },
-
-  tituloForm:{
-    fontSize: 16,
-    fontWeight: 'bold',
-    marginBottom: 4
+  input: {
+    marginBottom: 15,
   },
-
-  form:{
-    margin: 14
+  button: {
+    marginTop: 20,
   },
-
-  input:{
-    borderColor: '#BFBFBF',
-    borderStyle: 'solid',
-    borderWidth : 2,
-    borderRadius: 5,
-    padding: 5
+  error: {
+    color: 'red',
+    textAlign: 'center',
+    marginBottom: 10,
   },
-  
-  swith:{
-    flexDirection: 'row',
-    alignItems: 'center'
-  },
-
-  campoForm:{
-    marginTop: 6
-  }
-  
-
-})
+});
