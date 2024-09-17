@@ -7,7 +7,7 @@ export default function Card({entrada, saida}) {
         
         <View style={styles.item}>
    
-            <Text style={styles.tituloItem}>Saldo</Text>
+            <Text style={styles.tituloItem}>Entradas</Text>
             <View style={styles.conteudo}>
                 <Text style={styles.simbolo}>R$</Text>
                 <Text style={styles.valorEntrada}>{entrada}</Text>
@@ -18,7 +18,7 @@ export default function Card({entrada, saida}) {
 
         <View style={styles.item}>
    
-            <Text style={styles.tituloItem}>Gasto</Text>
+            <Text style={styles.tituloItem}>Saídas</Text>
             <View style={styles.conteudo}>
                 <Text style={styles.simbolo}>R$</Text>
                 <Text style={styles.valorSaida}>{saida}</Text>

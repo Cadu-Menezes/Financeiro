@@ -33,7 +33,14 @@ export default function Entrada({ navigation }) {
         setErro('Todos os campos são obrigatórios.');
         return;
       }
-      await criarMovimentacao({ valor, categoria, movimentacao: 'entrada' }); // Definindo 'entrada'
+
+      const hoje = new Date();
+      const dia = String(hoje.getDate()).padStart(2, '0');
+      const mes = String(hoje.getMonth() + 1).padStart(2, '0'); // Janeiro é 0
+      const ano = hoje.getFullYear();
+      const dataAtual = `${dia}/${mes}/${ano}`;
+
+      await criarMovimentacao({ valor, categoria, movimentacao: 'entrada', data: dataAtual }); // Definindo 'entrada'
       navigation.goBack();
     } catch (err) {
       setErro('Falha ao salvar a movimentação.');
@@ -61,8 +68,8 @@ export default function Entrada({ navigation }) {
         onValueChange={(itemValue) => setCategoria(itemValue)}
         style={styles.input}
       >
-        {categorias.map(cat => (
-          <Picker.Item key={cat.id} label={cat.nome} value={cat.id} />
+        {categorias.map(categoria => (
+          <Picker.Item key={categoria.id} label={categoria.nome} value={categoria.nome} />
         ))}
       </Picker>
 

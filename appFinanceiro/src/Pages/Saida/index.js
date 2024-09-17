@@ -79,11 +79,19 @@ export default function Saida({ navigation }) {
         urlsImagens.push(url);
       }
 
+      // Obter a data atual no formato desejado (DD/MM/YYYY) -- chatzin
+      const hoje = new Date();
+      const dia = String(hoje.getDate()).padStart(2, '0');
+      const mes = String(hoje.getMonth() + 1).padStart(2, '0'); // Janeiro é 0
+      const ano = hoje.getFullYear();
+      const dataAtual = `${dia}/${mes}/${ano}`;
+
       // Criar a movimentação com as URLs das imagens
       await criarMovimentacao({
         valor,
         categoria,
         movimentacao: 'saida',
+        data: dataAtual,
         imagens: urlsImagens, // Adiciona as URLs das imagens à movimentação
       });
 
@@ -114,8 +122,8 @@ export default function Saida({ navigation }) {
         onValueChange={(itemValue) => setCategoria(itemValue)}
         style={styles.input}
       >
-        {categorias.map(cat => (
-          <Picker.Item key={cat.id} label={cat.nome} value={cat.id} />
+        {categorias.map(categoria => (
+          <Picker.Item key={categoria.id} label={categoria.nome} value={categoria.nome} />
         ))}
       </Picker>
 
