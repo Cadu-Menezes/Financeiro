@@ -4,7 +4,7 @@ import { collection, addDoc, doc, updateDoc, deleteDoc, getDocs, getDoc } from '
 export const obterCategorias = async () => {
   const querySnapshot = await getDocs(collection(firestore, 'categorias'));
   const categorias = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-  console.log('Categorias obtidas:', categorias); 
+  // console.log('Categorias obtidas:', categorias); 
   return categorias;
 };
 

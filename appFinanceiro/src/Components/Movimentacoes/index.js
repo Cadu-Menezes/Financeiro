@@ -5,7 +5,7 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 export default function Movimentacoes({ data }) {
     const [showValue, setShowValue] = useState(false);
 
-    console.log("Data - Movimentacao", data);
+    // console.log("Data - Movimentacao", data);
 
     return (
         <TouchableOpacity style={styles.container} onPress={() => setShowValue(!showValue)}>

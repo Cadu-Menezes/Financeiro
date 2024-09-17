@@ -6,14 +6,23 @@ import Movimentacoes from '../../Components/Movimentacoes';
 import Acoes from '../../Components/Acoes';
 import { useState, useEffect } from 'react';
 import { obterMovimentacoes } from '../../Services/movimentacoesServices'; // Função para buscar do Firebase
+import { getAuth } from 'firebase/auth';
 
 export default function App() {
   const [movimentacoes, setMovimentacoes] = useState([]);
   const [loading, setLoading] = useState(true);
   const [totalEntrada, setTotalEntrada] = useState(0);
   const [totalSaida, setTotalSaida] = useState(0);
+  const [userEmail, setUserEmail] = useState('');
 
   useEffect(() => {
+     // Função para obter o email do usuário logado
+     const auth = getAuth();
+     const user = auth.currentUser;
+     if (user) {
+       setUserEmail(user.email); //
+     }
+     
     const unsubscribe = obterMovimentacoes((movimentacoesBuscadas) => {
       setMovimentacoes(movimentacoesBuscadas);
       calcularTotais(movimentacoesBuscadas);
@@ -50,7 +59,7 @@ export default function App() {
 
   return (
     <View style={styles.container}>
-      <Header name="Cadu Menezes" />
+      <Header name={userEmail} />
       <Card entrada={`${totalEntrada}`} saida={`-${totalSaida}`} />
       <StatusBar style="auto" />
 
