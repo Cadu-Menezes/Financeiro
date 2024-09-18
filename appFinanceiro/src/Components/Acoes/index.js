@@ -35,7 +35,7 @@ export default function Acoes() {
 
         </TouchableOpacity>
 
-        <TouchableOpacity style={styles.Botao}>
+        <TouchableOpacity style={styles.Botao} onPress={ () => {navigate('Configuracao')}}>
             <View style={styles.areaBotao}>
                 <AntDesign name='setting' size={26} color={'#000'}/>
             </View>

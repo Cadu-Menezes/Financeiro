@@ -12,6 +12,7 @@ import FormularioCategoria from '../Pages/Categoria/FormularioCategoria';
 import Login from '../Pages/Login'; 
 import ListaEntradas from '../Pages/ListaEntradas';
 import ListaSaidas from '../Pages/ListaSaidas';
+import Configuracao from '../Pages/Configuracoes';
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -55,6 +56,7 @@ export default function Routes() {
         <Stack.Screen name="FormularioCategoria" component={FormularioCategoria} />
         <Stack.Screen name="Entrada" component={Entrada} />
         <Stack.Screen name="Saida" component={Saida} />
+        <Stack.Screen name="Configuracao" component={Configuracao} />
       </Stack.Navigator>
     </NavigationContainer>
   );
