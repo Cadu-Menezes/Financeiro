@@ -16,7 +16,8 @@ export default function App() {
   const [userEmail, setUserEmail] = useState('');
 
   useEffect(() => {
-     // Função para obter o email do usuário logado
+     
+    // Recuperar o email do usuário logado
      const auth = getAuth();
      const user = auth.currentUser;
      if (user) {

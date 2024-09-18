@@ -33,4 +33,6 @@ isSupported().then((supported) => {
   }
 });
 
-export { firestore, auth, analytics };
+
+
+export {firebaseConfig, firestore, auth, analytics };
