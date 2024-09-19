@@ -8,6 +8,8 @@ import { useState, useEffect } from 'react';
 import { obterMovimentacoes } from '../../Services/movimentacoesServices'; 
 import { getAuth } from 'firebase/auth';
 import { ActivityIndicator } from 'react-native-paper';
+import NetInfo from '@react-native-community/netinfo';
+import { getMovimentacoes as getMovimentacoesOffline } from '../../Services/database'; 
 
 export default function Home() {
   
@@ -16,26 +18,49 @@ export default function Home() {
   const [totalEntrada, setTotalEntrada] = useState(0);
   const [totalSaida, setTotalSaida] = useState(0);
   const [userEmail, setUserEmail] = useState('');
+  const [isOnline, setIsOnline] = useState(true); 
 
   useEffect(() => {
     // Recuperar o email do usuário logado
     const auth = getAuth();
     const user = auth.currentUser;
     if (user) {
-      setUserEmail(user.email); //
+      setUserEmail(user.email);
     }
     
-    // Função para obter movimentações e calcular totais
-    const unsubscribe = obterMovimentacoes((movimentacoesBuscadas) => {
-      console.log("📊 Movimentações obtidas:", movimentacoesBuscadas);
-      setMovimentacoes(movimentacoesBuscadas);
-      calcularTotais(movimentacoesBuscadas);
-      setLoading(false); 
+    // Verificar se o dispositivo está online ou offline
+    const unsubscribeNetInfo = NetInfo.addEventListener(state => {
+      setIsOnline(state.isConnected);
     });
 
-    // Limpa o ouvinte quando o componente for desmontado
-    return () => unsubscribe();
-  }, []);
+    const carregarMovimentacoes = () => {
+      if (isOnline) {
+        // Se estiver online, buscar do Firestore
+        const unsubscribe = obterMovimentacoes((movimentacoesBuscadas) => {
+          console.log("📊 Movimentações obtidas online:", movimentacoesBuscadas);
+          setMovimentacoes(movimentacoesBuscadas);
+          calcularTotais(movimentacoesBuscadas);
+          setLoading(false); 
+        });
+
+        // Limpa o ouvinte quando o componente for desmontado
+        return () => unsubscribe();
+      } else {
+        // Se estiver offline, carregar do banco de dados local (SQLite)
+        getMovimentacoesOffline((movimentacoesOffline) => {
+          console.log("📊 Movimentações obtidas offline:", movimentacoesOffline);
+          setMovimentacoes(movimentacoesOffline);
+          calcularTotais(movimentacoesOffline);
+          setLoading(false);
+        });
+      }
+    };
+
+    carregarMovimentacoes();
+    
+    // Limpa o listener de rede quando o componente for desmontado
+    return () => unsubscribeNetInfo();
+  }, [isOnline]);
 
   const calcularTotais = (movimentacoes) => {
     let entrada = 0;
@@ -101,4 +126,9 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
+  loadingText: {
+    marginTop: 10,
+    fontSize: 16,
+    color: '#6200ee',
+  }
 });
