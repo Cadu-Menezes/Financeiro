@@ -16,16 +16,16 @@ export default function Movimentacoes({ data }) {
                 <View style={styles.infoContainer}>
                     <View style={styles.valorContainer}>
                         {showValue && (
-                            <Text style={data.movimentacao === 'entrada' ? styles.valor : styles.saida}>
-                                {data.movimentacao === 'entrada' ? `R$: ${data.valor}` : `R$: -${data.valor}`} 
+                            <Text style={data.tipo === 'entrada' ? styles.valor : styles.saida}>
+                                {data.tipo === 'entrada' ? `R$: ${data.valor}` : `R$: -${data.valor}`} 
                             </Text>
                         )}
                     </View>
                     <View style={styles.iconContainer}>
-                        {data.movimentacao === 'entrada' && (
+                        {data.tipo === 'entrada' && (
                             <Icon name="arrow-up" size={20} color="#2ecc71" />
                         )}
-                        {data.movimentacao === 'saida' && (
+                        {data.tipo === 'saida' && (
                             <Icon name="arrow-down" size={20} color="#e74c3c" />
                         )}
                     </View>

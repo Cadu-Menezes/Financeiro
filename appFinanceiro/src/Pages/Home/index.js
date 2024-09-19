@@ -7,9 +7,9 @@ import Acoes from '../../Components/Acoes';
 import { useState, useEffect } from 'react';
 import { obterMovimentacoes } from '../../Services/movimentacoesServices'; 
 import { getAuth } from 'firebase/auth';
-import { ActivityIndicator } from 'react-native-paper'; 
+import { ActivityIndicator } from 'react-native-paper';
 
-export default function App() {
+export default function Home() {
   
   const [movimentacoes, setMovimentacoes] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -18,15 +18,16 @@ export default function App() {
   const [userEmail, setUserEmail] = useState('');
 
   useEffect(() => {
-     
     // Recuperar o email do usuário logado
-     const auth = getAuth();
-     const user = auth.currentUser;
-     if (user) {
-       setUserEmail(user.email); //
-     }
-     
+    const auth = getAuth();
+    const user = auth.currentUser;
+    if (user) {
+      setUserEmail(user.email); //
+    }
+    
+    // Função para obter movimentações e calcular totais
     const unsubscribe = obterMovimentacoes((movimentacoesBuscadas) => {
+      console.log("📊 Movimentações obtidas:", movimentacoesBuscadas);
       setMovimentacoes(movimentacoesBuscadas);
       calcularTotais(movimentacoesBuscadas);
       setLoading(false); 
@@ -41,9 +42,9 @@ export default function App() {
     let saida = 0;
 
     movimentacoes.forEach((movimentacao) => {
-      if (movimentacao.movimentacao === 'entrada') {
+      if (movimentacao.tipo === 'entrada') {
         entrada += parseFloat(movimentacao.valor);
-      } else if (movimentacao.movimentacao === 'saida') {
+      } else if (movimentacao.tipo === 'saida') {
         saida += parseFloat(movimentacao.valor);
       }
     });
@@ -66,11 +67,8 @@ export default function App() {
       <Header name={userEmail} />
       <Card entrada={`${totalEntrada}`} saida={`-${totalSaida}`} />
       <StatusBar style="auto" />
-
       <Acoes />
-
       <Text style={styles.titulo}>Últimas Movimentações</Text>
-
       <FlatList
         style={styles.lista}
         data={movimentacoes}

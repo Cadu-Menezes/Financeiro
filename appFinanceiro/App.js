@@ -35,45 +35,40 @@ export default function App() {
   }, []);
 
   useEffect(() => {
-    const syncData = async () => {
-      if (isOnline) {
-        // Sincronizar dados do Firestore com SQLite
-        try {
-          // Sincronizar movimentações
-          const movimentacoesSnapshot = await getDocs(collection(db, 'movimentacoes'));
-          clearTable();
-          movimentacoesSnapshot.forEach(doc => {
-            const { tipo, valor, data, timestamp } = doc.data();
-            addMovimentacao(tipo, valor, data, timestamp);
-          });
-
-          // Sincronizar categorias
-          const categoriasSnapshot = await getDocs(collection(db, 'categorias'));
-          clearTableCategory();
-          categoriasSnapshot.forEach(doc => {
-            const { nome } = doc.data();
-            addCategoria(nome);
-          });
-        } catch (error) {
-          console.error('Erro ao sincronizar dados:', error);
-        }
-      } else {
-        // Carregar dados offline
-        try {
-          const movimentacoesBuscadas = await getMovimentacoes();
-          console.log('Movimentacoes offline carregados:', movimentacoesBuscadas);
-        } catch (error) {
-          console.error('Erro ao carregar dados offline:', error);
-        }
-
-        getCategorias(categorias => {
-          console.log('Categorias offline carregadas:', categorias);
+    if (isOnline) {
+      // Sincronizar dados do Firestore com SQLite
+      const syncData = async () => {
+        // Sincronizar movimentações
+        const movimentacoesSnapshot = await getDocs(collection(db, 'movimentacoes'));
+        clearTable();
+        movimentacoesSnapshot.forEach(doc => {
+          const { tipo, valor, categoria, data } = doc.data();
+          console.log('Movimentação no APP :', tipo, valor, categoria, data);
+          addMovimentacao(tipo, valor, categoria, data);
         });
-      }
-    };
-
-    syncData();
+  
+        // Sincronizar categorias
+        const categoriasSnapshot = await getDocs(collection(db, 'categorias'));
+        clearTableCategory();
+        categoriasSnapshot.forEach(doc => {
+          const { nome } = doc.data();
+          addCategoria(nome);
+        });
+      };
+  
+      syncData();
+    } else {
+      // Carregar dados offline
+      getMovimentacoes(movimentacoesBuscadas => {
+        console.log('Dados offline carregados:', movimentacoesBuscadas);
+      });
+  
+      getCategorias(categorias => {
+        console.log('Categorias offline carregadas:', categorias);
+      });
+    }
   }, [isOnline]);
+  
 
   return (
     <ApplicationProvider {...eva} theme={eva.light}>

@@ -21,7 +21,7 @@ export const obterMovimentacoes = (callback) => {
 export const obterEntradas = async () => {
   try {
     const movimentacoesRef = collection(firestore, 'movimentacoes');
-    const q = query(movimentacoesRef, where('movimentacao', '==', 'entrada')); 
+    const q = query(movimentacoesRef, where('tipo', '==', 'entrada')); 
     const snapshot = await getDocs(q);
     const entradas = snapshot.docs.map(doc => ({
       id: doc.id,
@@ -38,7 +38,7 @@ export const obterEntradas = async () => {
 export const obterSaidas = async () => {
   try {
     const movimentacoesRef = collection(firestore, 'movimentacoes');
-    const q = query(movimentacoesRef, where('movimentacao', '==', 'saida')); 
+    const q = query(movimentacoesRef, where('tipo', '==', 'saida')); 
     const snapshot = await getDocs(q);
     const saidas = snapshot.docs.map(doc => ({
       id: doc.id,

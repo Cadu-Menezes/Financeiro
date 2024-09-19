@@ -40,7 +40,7 @@ export default function Entrada({ navigation }) {
       const ano = hoje.getFullYear();
       const dataAtual = `${dia}/${mes}/${ano}`;
 
-      await criarMovimentacao({ valor, categoria, movimentacao: 'entrada', data: dataAtual }); // Definindo 'entrada'
+      await criarMovimentacao({ valor, categoria, tipo: 'entrada', data: dataAtual }); // Definindo 'entrada'
       navigation.goBack();
     } catch (err) {
       setErro('Falha ao salvar a movimentação.');

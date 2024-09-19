@@ -45,7 +45,7 @@ export default function Saida({ navigation }) {
       await criarMovimentacao({
         valor,
         categoria,
-        movimentacao: 'saida',
+        tipo: 'saida',
         data: dataAtual,
       });
 
