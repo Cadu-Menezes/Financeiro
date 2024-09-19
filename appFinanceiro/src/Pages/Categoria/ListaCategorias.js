@@ -2,21 +2,30 @@ import React, { useEffect, useState } from 'react';
 import { View, StyleSheet, FlatList, Alert } from 'react-native';
 import { Text, Button, Card } from 'react-native-paper';
 import { obterCategorias, deletarCategoria } from '../../Services/categoriaServices';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
+const CATEGORIAS_STORAGE_KEY = '@categorias';
 
 export default function ListaCategorias({ navigation }) {
   const [categorias, setCategorias] = useState([]);
 
   const fetchCategorias = async () => {
     try {
+      // Tentar obter categorias do AsyncStorage
+      const categoriasSalvas = await AsyncStorage.getItem(CATEGORIAS_STORAGE_KEY);
+      if (categoriasSalvas) {
+        setCategorias(JSON.parse(categoriasSalvas));
+      }
+
+      // Buscar categorias do serviço e atualizar AsyncStorage
       const categoriasBuscadas = await obterCategorias();
       setCategorias(categoriasBuscadas);
+      await AsyncStorage.setItem(CATEGORIAS_STORAGE_KEY, JSON.stringify(categoriasBuscadas));
     } catch (error) {
       console.error('Erro ao buscar categorias:', error);
     }
   };
 
-  //usei chatgpt porque não estava atualizando em tempo real a lista e não estava entendo mt bem
-  //aqui ele meio que add um WS para observar quando há mudanças 
   useEffect(() => {
     fetchCategorias();
 
@@ -41,7 +50,10 @@ export default function ListaCategorias({ navigation }) {
           onPress: async () => {
             try {
               await deletarCategoria(id);
-              setCategorias(categorias.filter(categoria => categoria.id !== id));
+              // Atualizar a lista localmente após exclusão
+              const categoriasAtualizadas = categorias.filter(categoria => categoria.id !== id);
+              setCategorias(categoriasAtualizadas);
+              await AsyncStorage.setItem(CATEGORIAS_STORAGE_KEY, JSON.stringify(categoriasAtualizadas));
             } catch (error) {
               console.error('Erro ao excluir categoria:', error);
             }

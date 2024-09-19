@@ -5,10 +5,12 @@ import Card from '../../Components/Card';
 import Movimentacoes from '../../Components/Movimentacoes';
 import Acoes from '../../Components/Acoes';
 import { useState, useEffect } from 'react';
-import { obterMovimentacoes } from '../../Services/movimentacoesServices'; // Função para buscar do Firebase
+import { obterMovimentacoes } from '../../Services/movimentacoesServices'; 
 import { getAuth } from 'firebase/auth';
+import { ActivityIndicator } from 'react-native-paper'; 
 
 export default function App() {
+  
   const [movimentacoes, setMovimentacoes] = useState([]);
   const [loading, setLoading] = useState(true);
   const [totalEntrada, setTotalEntrada] = useState(0);
@@ -27,7 +29,7 @@ export default function App() {
     const unsubscribe = obterMovimentacoes((movimentacoesBuscadas) => {
       setMovimentacoes(movimentacoesBuscadas);
       calcularTotais(movimentacoesBuscadas);
-      setLoading(false); // Parar de mostrar "Carregando..." quando os dados estiverem disponíveis
+      setLoading(false); 
     });
 
     // Limpa o ouvinte quando o componente for desmontado
@@ -52,8 +54,9 @@ export default function App() {
 
   if (loading) {
     return (
-      <View style={styles.container}>
-        <Text>Carregando...</Text>
+      <View style={styles.containerLoading}>
+        <ActivityIndicator size="large" color="#6200ee" />
+        <Text style={styles.loadingText}>Carregando...</Text>
       </View>
     );
   }
@@ -92,5 +95,12 @@ const styles = StyleSheet.create({
   },
   lista: {
     flex: 1,
+  },
+  containerLoading: {
+    flex: 1,
+    display: 'flex',
+    flexDirection: 'column',
+    justifyContent: 'center',
+    alignItems: 'center',
   },
 });

@@ -3,6 +3,7 @@ import { View, Text, Alert, FlatList, StyleSheet } from 'react-native';
 import { Button, Card } from 'react-native-paper';
 import { obterSaidas, deletarMovimentacao, atualizarMovimentacao, obterSaidastacao } from '../../Services/movimentacoesServices';
 import EditarMovimentacao from '../../Components/EditarMovimentacao'; 
+import { ActivityIndicator } from 'react-native-paper'; 
 
 // Aqui na lista estava com dificuldade para ir para a minha tela de cadastro levando o Id então com a ajuda do amiguinho
 //virtual eu fiz pela modal.
@@ -15,15 +16,17 @@ const ListaSaidas = () => {
     const [descricao, setDescricao] = useState('');
     const [valor, setValor] = useState('');
     const [categoria, setCategoria] = useState('');
-
+    const [loading, setLoading] = useState(true);
+    
     useEffect(() => {
         const fetchData = async () => {
-        try {
-            const dados = await obterSaidas();
-            setEntradas(dados);
-        } catch (error) {
-            console.error('Erro ao buscar entradas:', error);
-        }
+            try {
+                const dados = await obterSaidas();
+                setEntradas(dados);
+                setLoading(false);
+            } catch (error) {
+                console.error('Erro ao buscar entradas:', error);
+            }
         };
         fetchData();
     }, []);
@@ -99,6 +102,17 @@ const ListaSaidas = () => {
         </Card>
     );
 
+
+
+    if (loading) {
+        return (
+          <View style={styles.containerLoading}>
+            <ActivityIndicator size="large" color="#6200ee" />
+            <Text style={styles.loadingText}>Carregando...</Text>
+          </View>
+        );
+    }
+
     return (
         <View style={styles.container}>
             
@@ -159,6 +173,13 @@ const styles = StyleSheet.create({
   button: {
     marginHorizontal: 4,
     flex: 1,
+  },
+  containerLoading: {
+    flex: 1,
+    display: 'flex',
+    flexDirection: 'column',
+    justifyContent: 'center',
+    alignItems: 'center',
   },
 });
 

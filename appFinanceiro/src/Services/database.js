@@ -9,8 +9,8 @@ export const createTable = () => {
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         movimentacao TEXT,
         valor REAL,
-        data TEXT
-        imagens TEXT
+        data TEXT,
+        timestamp TEXT
       );`
     );
   });
@@ -25,11 +25,11 @@ export const createTable = () => {
   });
 };
 
-export const addMovimentacao = (tipo, valor, data) => {
+export const addMovimentacao = (tipo, valor, categoria, data, timestamp) => {
   db.transaction(tx => {
     tx.executeSql(
-      `INSERT INTO movimentacoes (movimentacao, valor, data, imagens) VALUES (?, ?, ?);`,
-      [tipo, valor, data]
+      `INSERT INTO movimentacoes (movimentacao, valor, categoria, data, timestamp) VALUES (?, ?, ?, ?, ?);`,
+      [tipo, valor, categoria, data, timestamp]
     );
   });
 };

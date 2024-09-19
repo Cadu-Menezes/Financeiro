@@ -2,16 +2,13 @@ import React, { useState, useEffect } from 'react';
 import { View, StyleSheet, ScrollView, Image, Alert } from 'react-native';
 import { TextInput, Button, Text } from 'react-native-paper';
 import { Picker } from '@react-native-picker/picker'; 
-import * as ImagePicker from 'expo-image-picker'; 
 import { criarMovimentacao } from '../../Services/movimentacoesServices';
 import { obterCategorias } from '../../Services/categoriaServices';
-import { getStorage, ref, uploadBytes, getDownloadURL } from 'firebase/storage'; 
 
 export default function Saida({ navigation }) {
   const [valor, setValor] = useState('');
   const [categoria, setCategoria] = useState('');
   const [categorias, setCategorias] = useState([]);
-  const [imagens, setImagens] = useState([]); 
   const [erro, setErro] = useState('');
 
   useEffect(() => {
@@ -30,53 +27,11 @@ export default function Saida({ navigation }) {
     fetchCategorias();
   }, []);
 
-  const selecionarImagens = async () => {
-    const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
-    if (status !== 'granted') {
-      alert('Permissão para acessar a galeria foi negada!');
-      return;
-    }
-
-    const result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.Images,
-      allowsMultipleSelection: true, // Permitir seleção de múltiplas imagens
-      quality: 1,
-    });
-
-    if (!result.canceled) {
-      setImagens([...imagens, ...result.assets]);
-    }
-  };
-
-  const removerImagem = (index) => {
-    const novasImagens = [...imagens];
-    novasImagens.splice(index, 1);
-    setImagens(novasImagens);
-  };
-
-  const uploadImagem = async (uri) => {
-    const storage = getStorage();
-    const response = await fetch(uri);
-    const blob = await response.blob();
-    const imagemRef = ref(storage, `imagens/${Date.now()}`);
-    await uploadBytes(imagemRef, blob);
-
-    const downloadURL = await getDownloadURL(imagemRef);
-    return downloadURL;
-  };
-
   const handleSubmit = async () => {
     try {
       if (!valor || !categoria) {
         setErro('Todos os campos são obrigatórios.');
         return;
-      }
-
-      // Fazer o upload das imagens
-      const urlsImagens = [];
-      for (const imagem of imagens) {
-        const url = await uploadImagem(imagem.uri);
-        urlsImagens.push(url);
       }
 
       // Obter a data atual no formato desejado (DD/MM/YYYY) -- chatzin
@@ -92,17 +47,21 @@ export default function Saida({ navigation }) {
         categoria,
         movimentacao: 'saida',
         data: dataAtual,
-        imagens: urlsImagens, // Adiciona as URLs das imagens à movimentação
       });
 
       navigation.goBack();
+
     } catch (err) {
+
       setErro('Falha ao salvar a movimentação.');
+    
     }
+
   };
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
+      
       <Text style={styles.title}>Cadastrar Saída</Text>
 
       {erro ? <Text style={styles.error}>{erro}</Text> : null}
@@ -127,24 +86,10 @@ export default function Saida({ navigation }) {
         ))}
       </Picker>
 
-      <Button mode="outlined" onPress={selecionarImagens} style={styles.button}>
-        Selecionar Fotos
-      </Button>
-
-      <ScrollView horizontal style={styles.imagensContainer}>
-        {imagens.map((imagem, index) => (
-          <View key={index} style={styles.imagemWrapper}>
-            <Image source={{ uri: imagem.uri }} style={styles.imagem} />
-            <Button mode="text" onPress={() => removerImagem(index)}>
-              Remover
-            </Button>
-          </View>
-        ))}
-      </ScrollView>
-
       <Button mode="contained" onPress={handleSubmit} style={styles.button}>
         Salvar
       </Button>
+
     </ScrollView>
   );
 }
@@ -175,16 +120,5 @@ const styles = StyleSheet.create({
     fontSize: 16,
     marginBottom: 5,
   },
-  imagensContainer: {
-    marginTop: 20,
-  },
-  imagemWrapper: {
-    marginRight: 10,
-    alignItems: 'center',
-  },
-  imagem: {
-    width: 100,
-    height: 100,
-    marginBottom: 5,
-  },
+ 
 });

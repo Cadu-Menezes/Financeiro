@@ -13,6 +13,7 @@ import Login from '../Pages/Login';
 import ListaEntradas from '../Pages/ListaEntradas';
 import ListaSaidas from '../Pages/ListaSaidas';
 import Configuracao from '../Pages/Configuracoes';
+import EditarUsuario from '../Pages/EditarUsuario';
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -57,6 +58,7 @@ export default function Routes() {
         <Stack.Screen name="Entrada" component={Entrada} />
         <Stack.Screen name="Saida" component={Saida} />
         <Stack.Screen name="Configuracao" component={Configuracao} />
+        <Stack.Screen name="EditarUsuario" component={EditarUsuario} />
       </Stack.Navigator>
     </NavigationContainer>
   );

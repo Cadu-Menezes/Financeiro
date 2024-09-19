@@ -3,82 +3,74 @@ import { View, StyleSheet } from 'react-native';
 import { TextInput, Button, Text } from 'react-native-paper'; 
 import AsyncStorage from '@react-native-async-storage/async-storage'; 
 import { auth } from '../../../firebaseConfig'; 
-import { signInWithEmailAndPassword, onAuthStateChanged } from 'firebase/auth'; 
+import { signInWithEmailAndPassword } from 'firebase/auth'; 
 import EsqueciSenhaModal from '../../Components/EsqueciSenhaModal'; 
 import { useNavigation } from '@react-navigation/native'; 
 import NetInfo from '@react-native-community/netinfo'; 
 
 export default function Login() {
+ 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [isModalVisible, setModalVisible] = useState(false); // Controle de visibilidade da modal
+  const [online, setOnline] = useState(true); // Estado para verificar conexão com a internet
   const navigation = useNavigation(); 
 
+  useEffect(() => {
+    const verificaConexao = NetInfo.addEventListener(state => {
+      setOnline(state.isConnected);
+    });
 
-   // Efeito para verificar credenciais armazenadas localmente -- chatzin
-   useEffect(() => {
-    const checkStoredCredentials = async () => {
-      try {
-        
-        const storedEmail = await AsyncStorage.getItem('userEmail');
-        const storedPassword = await AsyncStorage.getItem('userPassword'); 
-        
-        console.log('Credenciais armazenadas:', storedEmail, storedPassword);
-
-        if (storedEmail && storedPassword) {
-          setEmail(storedEmail);
-          setPassword(storedPassword);
-
-          // Tentar autenticar automaticamente com Firebase
-          try {
-            await getStoredCredentials(storedEmail, storedPassword);
-            navigation.navigate('AppTabs'); // Navegar para a tela com tabs após login
-          } catch (err) {
-            console.error('Erro ao autenticar com credenciais armazenadas:', err);
-          }
-        }
-      } catch (error) {
-        console.error('Erro ao recuperar dados armazenados:', error);
-      }
+    return () => {
+      verificaConexao();
     };
-
-    checkStoredCredentials();
   }, []);
-  
-  // Recuperar credenciais armazenadas -- chatzin
-  const getStoredCredentials = async () => {
-    try {
-      const email = await AsyncStorage.getItem('userEmail');
-      const password = await AsyncStorage.getItem('userPassword');
-      return { email, password };
-    } catch (error) {
-      console.error('Erro ao recuperar credenciais:', error);
-      return { email: null, password: null };
-    }
-  };
 
   const handleLogin = async () => {
-    try {
-      
-      await signInWithEmailAndPassword(auth, email, password);
-      
-      // Armazenar o email e a senha localmente após login -- chatzin
-      await AsyncStorage.setItem('userEmail', email);
-      await AsyncStorage.setItem('userPassword', password); 
+    if (online) {
+      // Verifica as credenciais no Firebase quando online
+      try {
+        
+        await signInWithEmailAndPassword(auth, email, password);
+        
+        await AsyncStorage.setItem('userEmail', email); // Armazena o email do usuário para caso tente entrar offline
 
-      navigation.navigate('AppTabs'); // Navegar para a tela com tabs após login
-    
-    } catch (err) {
-      //chatzin
-      if (err.code === 'auth/network-request-failed') {
-        setError('Sem conexão com a internet. Verifique sua conexão e tente novamente.');
-      } else {
-        setError(`Falha no login: ${err.message}`);
+        navigation.navigate('AppTabs'); // Navegar para a tela com tabs após login
+      
+      } catch (err) {
+       
+        if (err.code === 'auth/network-request-failed') {
+          setError('Sem conexão com a internet. Verifique sua conexão e tente novamente.');
+        } else {
+          setError(`Falha no login: ${err.message}`);
+        }
+      
       }
-    
-    }
+    } else {
+      
+      // Verifica se tem credenciais armazenadas localmente quando offline
+      try {
 
+        const storedEmail = await AsyncStorage.getItem('userEmail');
+        
+        //se o email for igual ao armazenado, navega para a tela de tabs, se não, mostra erro
+        
+        if (storedEmail === email) {
+        
+          navigation.navigate('AppTabs');
+        
+        } else {
+        
+          setError('Credenciais inválidas.');
+        
+        }
+      } catch (err) {
+        
+        setError('Erro ao verificar credenciais offline.');
+      
+      }
+    }
   };
 
   const handleEsqueciSenha = () => {
