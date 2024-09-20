@@ -7,15 +7,16 @@ const db = SQLite.openDatabase('app.db');
 export const createTable = () => {
   console.log("📋 Tentando criar tabelas...");
 
+  // Tabela de movimentações
   db.transaction(tx => {
     tx.executeSql(
       `CREATE TABLE IF NOT EXISTS movimentacoes (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         tipo TEXT,
         valor TEXT,
-        categoria TEXT,
+        categoria TEXT,  
         data TEXT
-      );`,  
+      );`,
       [],
       () => console.log("✅ Tabela 'movimentacoes' criada ou já existe."),
       (_, error) => {
@@ -25,6 +26,7 @@ export const createTable = () => {
     );
   });
 
+  // Tabela de categorias
   db.transaction(tx => {
     tx.executeSql(
       `CREATE TABLE IF NOT EXISTS categorias (
@@ -43,7 +45,6 @@ export const createTable = () => {
 
 // Função para adicionar movimentação
 export const addMovimentacao = (tipo, valor, categoria, data) => {
-  
   console.log("📥 Adicionando movimentação:", { tipo, valor, categoria, data });
 
   db.transaction(tx => {
@@ -80,7 +81,7 @@ export const addCategoria = (nome) => {
 export const getMovimentacoes = (callback) => {
   db.transaction(tx => {
     tx.executeSql(
-      'SELECT * FROM movimentacoes',
+      'SELECT * FROM movimentacoes;',
       [],
       (_, { rows: { _array } }) => {
         console.log('📊 Movimentações carregadas:', _array); 
@@ -97,7 +98,7 @@ export const getMovimentacoes = (callback) => {
 export const getCategorias = (callback) => {
   db.transaction(tx => {
     tx.executeSql(
-      'SELECT * FROM categorias',
+      'SELECT * FROM categorias;',
       [],
       (_, { rows: { _array } }) => {
         console.log('📂 Categorias carregadas:', _array); 
@@ -109,8 +110,6 @@ export const getCategorias = (callback) => {
     );
   });
 };
-
-
 
 // Função para limpar a tabela de movimentações
 export const clearTable = () => {

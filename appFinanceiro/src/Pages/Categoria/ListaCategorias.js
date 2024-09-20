@@ -2,39 +2,53 @@ import React, { useEffect, useState } from 'react';
 import { View, StyleSheet, FlatList, Alert } from 'react-native';
 import { Text, Button, Card } from 'react-native-paper';
 import { obterCategorias, deletarCategoria } from '../../Services/categoriaServices';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import { getCategorias } from '../../Services/database'; 
+import NetInfo from '@react-native-community/netinfo'; 
 
-const CATEGORIAS_STORAGE_KEY = '@categorias';
 
+//GPT Ajudou mt no offline
 export default function ListaCategorias({ navigation }) {
+  
   const [categorias, setCategorias] = useState([]);
+  const [isOnline, setIsOnline] = useState(true); // Estado para armazenar status da conexão
 
   const fetchCategorias = async () => {
     try {
-      // Tentar obter categorias do AsyncStorage
-      const categoriasSalvas = await AsyncStorage.getItem(CATEGORIAS_STORAGE_KEY);
-      if (categoriasSalvas) {
-        setCategorias(JSON.parse(categoriasSalvas));
+      if (isOnline) {
+        // Se estiver online, buscar categorias do serviço e atualiza o banco de dados 
+        const categoriasBuscadas = await obterCategorias();
+        setCategorias(categoriasBuscadas);
+        // Aqui você pode adicionar a lógica para armazenar no SQLite se necessário
+      } else {
+        // Se estiver offline, buscar categorias do SQLite usando a função getCategorias
+        getCategorias((categoriasSalvas) => {
+          setCategorias(categoriasSalvas);
+          console.log('Offline: carregando categorias do SQLite');
+        });
       }
-
-      // Buscar categorias do serviço e atualizar AsyncStorage
-      const categoriasBuscadas = await obterCategorias();
-      setCategorias(categoriasBuscadas);
-      await AsyncStorage.setItem(CATEGORIAS_STORAGE_KEY, JSON.stringify(categoriasBuscadas));
     } catch (error) {
       console.error('Erro ao buscar categorias:', error);
     }
   };
 
   useEffect(() => {
-    fetchCategorias();
+    
+    // Verificar o status da conexão
+    const unsubscribe = NetInfo.addEventListener(state => {
+      setIsOnline(state.isConnected);
+    });
 
-    const unsubscribe = navigation.addListener('focus', () => {
+    fetchCategorias(); // Carregar categorias inicialmente
+
+    const focusListener = navigation.addListener('focus', () => {
       fetchCategorias(); // Atualizar a lista quando a tela ganhar foco
     });
 
-    return unsubscribe; // Limpar o ouvinte quando o componente for desmontado
-  }, [navigation]);
+    return () => {
+      unsubscribe(); // Desinscrever do listener de rede
+      focusListener(); // Limpar o ouvinte quando o componente for desmontado
+    };
+  }, [navigation, isOnline]);
 
   const handleDelete = async (id) => {
     Alert.alert(
@@ -53,7 +67,6 @@ export default function ListaCategorias({ navigation }) {
               // Atualizar a lista localmente após exclusão
               const categoriasAtualizadas = categorias.filter(categoria => categoria.id !== id);
               setCategorias(categoriasAtualizadas);
-              await AsyncStorage.setItem(CATEGORIAS_STORAGE_KEY, JSON.stringify(categoriasAtualizadas));
             } catch (error) {
               console.error('Erro ao excluir categoria:', error);
             }
@@ -69,7 +82,7 @@ export default function ListaCategorias({ navigation }) {
       <Text style={styles.title}>Categorias</Text>
       <FlatList
         data={categorias}
-        keyExtractor={(item) => item.id}
+        keyExtractor={(item) => item.id.toString()} // Ajuste para garantir que o ID seja uma string
         renderItem={({ item }) => (
           <Card style={styles.card}>
             <Card.Content>

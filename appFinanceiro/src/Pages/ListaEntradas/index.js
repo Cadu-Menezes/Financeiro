@@ -24,10 +24,13 @@ const ListaEntradas = () => {
         
             try {
                 
-                const dados = await obterEntradas();
-                setEntradas(dados);
+                const unsubscribe = obterEntradas(setEntradas);
                 setLoading(false);
 
+                // Limpeza ao desmontar o componente
+                return () => unsubscribe();
+                
+                
             } catch (error) {
                 console.error('Erro ao buscar entradas:', error);
             }

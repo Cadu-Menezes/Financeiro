@@ -18,36 +18,47 @@ export const obterMovimentacoes = (callback) => {
 };
 
 // Função para buscar somente movimentações de entrada
-export const obterEntradas = async () => {
+export const obterEntradas = (callback) => {
   try {
+    
     const movimentacoesRef = collection(firestore, 'movimentacoes');
-    const q = query(movimentacoesRef, where('tipo', '==', 'entrada')); 
-    const snapshot = await getDocs(q);
-    const entradas = snapshot.docs.map(doc => ({
-      id: doc.id,
-      ...doc.data(),
-    }));
-    return entradas;
+    const q = query(movimentacoesRef, where('tipo', '==', 'entrada'));
+
+    // Usando onSnapshot para escutar mudanças em tempo real
+    const unsubscribe = onSnapshot(q, (snapshot) => {
+      const entradas = snapshot.docs.map(doc => ({
+        id: doc.id,
+        ...doc.data(),
+      }));
+      callback(entradas); 
+    });
+
+    return unsubscribe; // Retorna a função para parar de escutar quando necessário
   } catch (error) {
     console.error('Erro ao buscar entradas:', error);
-    return []; 
+    return () => {}; 
   }
 };
 
 // Função para buscar somente movimentações de saida
-export const obterSaidas = async () => {
+export const obterSaidas = (callback) => {
   try {
     const movimentacoesRef = collection(firestore, 'movimentacoes');
-    const q = query(movimentacoesRef, where('tipo', '==', 'saida')); 
-    const snapshot = await getDocs(q);
-    const saidas = snapshot.docs.map(doc => ({
-      id: doc.id,
-      ...doc.data(),
-    }));
-    return saidas;
+    const q = query(movimentacoesRef, where('tipo', '==', 'saida'));
+
+    // Usando onSnapshot para escutar mudanças em tempo real
+    const unsubscribe = onSnapshot(q, (snapshot) => {
+      const saidas = snapshot.docs.map(doc => ({
+        id: doc.id,
+        ...doc.data(),
+      }));
+      callback(saidas); 
+    });
+
+    return unsubscribe; // Retorna a função para parar de escutar quando necessário
   } catch (error) {
     console.error('Erro ao buscar saidas:', error);
-    return []; 
+    return () => {}; 
   }
 };
 

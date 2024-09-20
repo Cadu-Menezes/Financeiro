@@ -21,9 +21,13 @@ const ListaSaidas = () => {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const dados = await obterSaidas();
-                setEntradas(dados);
+               
+                const unsubscribe = obterSaidas(setEntradas);
                 setLoading(false);
+
+                // Limpeza ao desmontar o componente
+                return () => unsubscribe();
+            
             } catch (error) {
                 console.error('Erro ao buscar entradas:', error);
             }
