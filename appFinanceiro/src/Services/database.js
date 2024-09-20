@@ -83,11 +83,11 @@ export const getMovimentacoes = (callback) => {
       'SELECT * FROM movimentacoes',
       [],
       (_, { rows: { _array } }) => {
-        console.log('📊 Movimentações carregadas:', _array); // Log com ícone
-        callback(_array); // Use o callback para retornar os dados
+        console.log('📊 Movimentações carregadas:', _array); 
+        callback(_array); 
       },
       (_, error) => {
-        console.error('❌ Erro ao buscar movimentações:', error); // Log com ícone de erro
+        console.error('❌ Erro ao buscar movimentações:', error); 
       }
     );
   });
@@ -100,11 +100,11 @@ export const getCategorias = (callback) => {
       'SELECT * FROM categorias',
       [],
       (_, { rows: { _array } }) => {
-        console.log('📂 Categorias carregadas:', _array); // Log com ícone
-        callback(_array); // Use callback
+        console.log('📂 Categorias carregadas:', _array); 
+        callback(_array); 
       },
       (_, error) => {
-        console.error('❌ Erro ao buscar categorias:', error); // Log com ícone de erro
+        console.error('❌ Erro ao buscar categorias:', error); 
       }
     );
   });
