@@ -31,11 +31,8 @@ export default function Login() {
     if (online) {
       // Verifica as credenciais no Firebase quando online
       try {
-        
+        setError('');
         await signInWithEmailAndPassword(auth, email, password);
-        
-        await AsyncStorage.setItem('userEmail', email); // Armazena o email do usuário para caso tente entrar offline
-
         navigation.navigate('AppTabs'); // Navegar para a tela com tabs após login
       
       } catch (err) {
@@ -48,28 +45,7 @@ export default function Login() {
       
       }
     } else {
-      
-      // Verifica se tem credenciais armazenadas localmente quando offline
-      try {
-
-        const storedEmail = await AsyncStorage.getItem('userEmail');
-        
-        //se o email for igual ao armazenado, navega para a tela de tabs, se não, mostra erro
-        
-        if (storedEmail === email) {
-        
-          navigation.navigate('AppTabs');
-        
-        } else {
-        
-          setError('Credenciais inválidas.');
-        
-        }
-      } catch (err) {
-        
-        setError('Erro ao verificar credenciais offline.');
-      
-      }
+      setError('Sem conexão com a internet. Verifique sua conexão e tente novamente.');
     }
   };
 

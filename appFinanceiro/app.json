@@ -22,7 +22,12 @@
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "package": "com.kduzin.appFinanceiro"
+      "package": "com.kduzin.appFinanceiro",
+      "permissions": [
+        "CAMERA", 
+        "ACCESS_FINE_LOCATION",
+        "READ_EXTERNAL_STORAGE"
+      ]
     },
     "web": {
       "favicon": "./assets/favicon.png"
@@ -31,6 +36,7 @@
       "eas": {
         "projectId": "16419d9a-9057-4faf-aad9-ea0da4d63881"
       }
-    }
+    },
+    "description": "Um aplicativo de finanças pessoais que ajuda a gerenciar suas despesas e receitas."
   }
 }
