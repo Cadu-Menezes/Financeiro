@@ -27,7 +27,6 @@ export default function Home() {
     
     // Função para obter movimentações e calcular totais
     const unsubscribe = obterMovimentacoes((movimentacoesBuscadas) => {
-      console.log("📊 Movimentações obtidas:", movimentacoesBuscadas);
       setMovimentacoes(movimentacoesBuscadas);
       calcularTotais(movimentacoesBuscadas);
       setLoading(false); 
